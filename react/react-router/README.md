@@ -221,7 +221,7 @@ const App = () => {
 
 Как вы видите, можно вкладывать компоненты `Route` в другой компонент `Route` — тогда первые становятся так называемыми `Nested Routes`.
 
-Теперь мы можем немного изменить наш компонент `Layout` таким способом, используя компонент `Outlet` из _react-router_:
+Теперь нам нужно немного изменить наш компонент `Layout` таким способом, используя компонент `Outlet` из _react-router_:
 
 ```tsx
 import { Routes, Route, Outlet, Link } from 'react-router';
@@ -238,3 +238,64 @@ const Layout = () => {
 ```
 
 По сути компонент `Outlet` в компоненте `Layout` вставляет дочерний элемент соответсвующий текущему пути (`Home` при пути `/home` или `Users` при пути `/users`) вместо себя. В конце концов, использование `Layout Route` помогает вам дать каждому компоненту Route в группе один и тот же макет (например, стиль с CSS, структура с HTML).
+
+## Активные ссылки
+
+Теперь мы можем переместить наш заголовок и компонент с навигацией в компонент `Layout`.
+
+Кроме того давайте обновим наши `Link` на `NavLink`, которые как и Route отслеживают наш текущий путь и позволяют получить нам аргумент `isActive`, который мы можем использовать, передавая в _style_, _className_ или _children_ функцию, которая принимает эти аргументы и работает с ними. Заметьте что обычные компоненты _react_ не могут принимать функции в их _style_, _className_ и _children_ в качестве аргументов.
+
+---
+
+_children_ — это всё, что вложено между JSX-тегами, например <Parent>...</Parent>. Компонент Parent — это обычная функция, которая получает props, включая children, и возвращает JSX. JSX — это синтаксический сахар над React.createElement(...), и React сам вызывает эти компоненты при рендеринге.
+
+---
+
+```tsx
+import {
+  ...
+  NavLink,
+} from 'react-router';
+
+const App = () => {
+  return (
+    <Routes>
+      <Route element={<Layout />}>
+        <Route path="home" element={<Home />} />
+        <Route path="users" element={<Users />} />
+      </Route>
+    </Routes>
+  );
+};
+
+const Layout = () => {
+  // Функция которая принимает isActive как аргумент и в зависимости от его значения вохвращает обьект со стилями
+  const styleFn = ({ isActive }: NavLinkRenderProps) => ({
+    fontWeight: isActive ? "bold" : "normal",
+  });
+
+  return (
+    <>
+      <h1>React Router</h1>
+
+      <nav
+        style={{
+          borderBottom: "solid 1px",
+          paddingBottom: "1rem",
+        }}
+      >
+        <NavLink to="/home" style={styleFn}>Home</NavLink>
+        <NavLink to="/users" style={styleFn}>Users</NavLink>
+      </nav>
+
+      <main style={{ padding: "1rem 0" }}>
+        <Outlet />
+      </main>
+    </>
+  );
+};
+```
+
+## Индексные маршруты
+
+Можно заметить что у нас есть пути `/home` и `/users`. Но у нас нет _индексного маршрута_ `/`.
