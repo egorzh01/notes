@@ -1,0 +1,7 @@
+SOLID
+
+ACID
+
+KISS
+
+DRY
