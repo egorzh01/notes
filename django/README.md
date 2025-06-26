@@ -376,3 +376,53 @@ product.delete()
 ```bash
 python manage.py createsuperuser
 ```
+
+#### Кастомизация пользователя
+
+...
+
+### Панель администратора
+
+...
+
+### Создание контроллеров
+
+Основной частью нашего приложения, являются контроллеры, которые будут обрабатывать запросы пользователя.
+
+```python
+# myapp/views.py
+
+from django.http import HttpResponse, HttpRequest
+
+def index(request: HttpRequest) -> HttpResponse:
+    return HttpResponse("Hello, world!")
+```
+
+### Создание маршрутов
+
+Для того чтобы приложение могло понять какой хендлер должен обрабатывать запрос, необходимо создать маршруты.
+
+```python
+# myapp/urls.py
+
+from django.urls import path
+
+urlpatterns = [
+    path("", index, name="index"),
+]
+```
+
+Далее нам нужно подключить маршруты к нашему приложению:
+
+```python
+# myapp/apps.py
+
+from django.apps import AppConfig
+
+class MyappConfig(AppConfig):
+    default_auto_field = "django.db.models.BigAutoField"
+    name = "myapp"
+
+    def ready(self):
+        import myapp.urls
+```
